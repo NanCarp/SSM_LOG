@@ -56,6 +56,8 @@ public class UserServiceImpl implements UserService {
 
     }
 
-
+    public User findUser(User user) {
+        return userDao.findOneById(user.getLoginId());
+    }
 
 }
