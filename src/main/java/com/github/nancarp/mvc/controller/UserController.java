@@ -1,15 +1,17 @@
 package com.github.nancarp.mvc.controller;
 
-import com.github.nancarp.domain.ResponseObject;
+import com.github.nancarp.domain.ResponseObj;
 import com.github.nancarp.domain.User;
-import com.github.nancarp.service.serviceImpl.UserServiceImpl;
+import com.github.nancarp.service.UserService;
 import com.github.nancarp.utils.GsonUtils;
 import com.github.nancarp.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,10 +24,12 @@ import javax.servlet.http.HttpServletRequest;
 public class UserController {
 
     @Autowired
-    private UserServiceImpl userService;
-    private ResponseObject responseObject;
+    private UserService userService;
+    private ResponseObj responseObj;
 
-    @RequestMapping(value = "/reg", method = RequestMethod.POST)
+    @RequestMapping(value = "/reg"
+            , method = RequestMethod.POST
+            )
     public ModelAndView reg(HttpServletRequest req, User user) throws Exception {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("home");
@@ -53,44 +57,60 @@ public class UserController {
         return mav;
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = {
+    @RequestMapping(value = "/login"
+            , method = RequestMethod.POST
+            , produces = {
             "application/json; charset=utf-8"
     })
     @ResponseBody
-    public ModelAndView login(HttpServletRequest req, User user) {
-        ModelAndView mav = new ModelAndView("home");
-        String result;
+    public Object login(HttpServletRequest req, User user) {
+        Object result;
 
         if (null == user) {
-            responseObject = new ResponseObject<User>();
-            responseObject.setCode(ResponseObject.EMPTY);
-            responseObject.setMsg("登录信息不能为空");
-            result = GsonUtils.gson.toJson(responseObject);
-            mav.addObject("result", result);
-            return mav;
+            responseObj = new ResponseObj<User>();
+            responseObj.setCode(ResponseObj.EMPTY);
+            responseObj.setMsg("登录信息不能为空");
+            result = new GsonUtils().toJson(responseObj);
+            return result;
         }
 
         //查找用户
         User user1 = userService.findUser(user);
         if (null == user1) {
-            responseObject = new ResponseObject<User>();
-            responseObject.setCode(ResponseObject.EMPTY);
-            responseObject.setMsg("未找到该用户");
-            result = GsonUtils.gson.toJson(responseObject);
+            responseObj = new ResponseObj<User>();
+            responseObj.setCode(ResponseObj.EMPTY);
+            responseObj.setMsg("未找到该用户");
+            result =  new GsonUtils().toJson(responseObj);
         } else {
             if (user.getPwd().equals(user1.getPwd())) {
-                responseObject = new ResponseObject<User>();
-                responseObject.setCode(ResponseObject.OK);
-                responseObject.setMsg(ResponseObject.OK_STR);
-                result = GsonUtils.gson.toJson(responseObject);
+                responseObj = new ResponseObj<User>();
+                responseObj.setCode(ResponseObj.OK);
+                responseObj.setMsg(ResponseObj.OK_STR);
+                result =  new GsonUtils().toJson(responseObj);
             } else {
-                responseObject = new ResponseObject<User>();
-                responseObject.setCode(ResponseObject.FAILED);
-                responseObject.setMsg("ResponseObj.FAILED");
-                result = GsonUtils.gson.toJson(responseObject);
+                responseObj = new ResponseObj<User>();
+                responseObj.setCode(ResponseObj.FAILED);
+                responseObj.setMsg("ResponseObj.FAILED");
+                result =  new GsonUtils().toJson(responseObj);
             }
         }
-        mav.addObject("result", result);
-        return mav;
+        return result;
+    }
+
+    @RequestMapping(value = "/uploadHeadPic"
+            , method = RequestMethod.POST
+            , produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public Object uploadHeadPic(@RequestParam(required = false) MultipartFile file, HttpServletRequest request) {
+        if (null == file || file.isEmpty()) {
+            responseObj = new ResponseObj();
+            responseObj.setCode(ResponseObj.FAILED);
+            responseObj.setMsg("文件不能为空");
+            return new GsonUtils().toJson(responseObj);
+        }
+        responseObj = new ResponseObj();
+        responseObj.setCode(ResponseObj.OK);
+        responseObj.setMsg("文件长度为：" + file.getSize());
+        return new GsonUtils().toJson(responseObj);
     }
 }

@@ -3,7 +3,7 @@ package com.github.nancarp.domain;
 /**
  * Created by nanca on 8/16/2017.
  */
-public class ResponseObject<T> {
+public class ResponseObj<T> {
     public static final int OK = 1, FAILED = 0, EMPTY = -1;
     public static final String OK_STR = "成功", FAILED_STR = "失败", EMPTY_STR = "数据为空";
 

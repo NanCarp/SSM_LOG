@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 public class GsonUtils {
 
-    public static Gson gson;
+    static Gson gson;
 
 
     /**
@@ -175,6 +175,5 @@ public class GsonUtils {
     public <V> V fromJson(Reader reader, Type type) {
         return gson.fromJson(reader, type);
     }
-
 
 }

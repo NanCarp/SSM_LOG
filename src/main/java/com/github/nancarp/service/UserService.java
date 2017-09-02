@@ -7,4 +7,6 @@ import com.github.nancarp.domain.User;
  */
 public interface UserService extends BaseService<User> {
     void add(User user) throws Exception;
+
+    User findUser(User user);
 }

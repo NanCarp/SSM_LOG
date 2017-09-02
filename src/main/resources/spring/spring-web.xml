@@ -23,6 +23,7 @@
     <mvc:resources mapping="/css/**" location="/static/css/" />
     <mvc:resources mapping="/images/**" location="/static/images/" />
     <mvc:resources mapping="/view/**" location="/static/view/" />
+    <mvc:resources mapping="/fonts/**" location="/static/fonts/" />
     <mvc:default-servlet-handler/>
 
     <!-- 3.配置jsp 显示ViewResolver -->
@@ -38,4 +39,8 @@
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--下面设置的是上传文件的最大大小-->
+        <property name="maxUploadSize" value="10000000"/>
+    </bean>
 </beans>
